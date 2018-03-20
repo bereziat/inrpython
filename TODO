@@ -1,0 +1,7 @@
+- patch inrimage pour gestion des exceptions
+- distribution: packaging conda ?
+  https://conda.io/docs/user-guide/tutorials/build-pkgs.html
+  (plus tard, directement dans la distrib inrimage quand
+  libinrimage.a sera shared-safe)
+- 
+  
