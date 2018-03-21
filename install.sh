@@ -1,7 +1,7 @@
 #!/bin/bash
 # installation du module (version beta et naive)
 
-INRPYTHONDIR=$(pwd)/usr
+INRPYTHONDIR=$(pwd)/inrimage
 INRIMAGESRC=http://inrimage.gforge.inria.fr/dist/latest/inrimage.tar.gz
 
 # Récupérer inrimage, compiler que la bibliothèque en mode partagée, et
@@ -11,7 +11,6 @@ TMPDIR=$(mktemp -d)
 mkdir -p $INRPYTHONDIR $TMPDIR
 
 (
-    exit
     cd $TMPDIR
     wget $INRIMAGESRC
     tar xfz inrimage.tar.gz
@@ -23,6 +22,7 @@ mkdir -p $INRPYTHONDIR $TMPDIR
     make install
 )
 rm -rf $TMPDIR
+
 sed -r "/INRPYTHONPATH/d; s,libinrpath,'$INRPYTHONDIR/lib'," <inrimage.py >$INRPYTHONDIR/inrimage.py
 
 read -p'Should I modify your ~/.bashrc ? (y/N)' yesno
