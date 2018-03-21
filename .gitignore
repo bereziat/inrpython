@@ -1,0 +1,10 @@
+*~
+*.pyc
+# created by install.sh
+inrimage/
+# created by test.py
+tests/
+# created by setup.py
+dist/
+build/
+MANIFEST
