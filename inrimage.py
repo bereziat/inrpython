@@ -81,7 +81,7 @@ except AttributeError:
 ###############################
 # A class to read/write images
 ###############################
-class Image:
+class InrImage:
     """
     A simple Python wrapper to Inrimage library. See 'man Intro' for
     an introduction to the Inrimage format.
@@ -101,24 +101,24 @@ class Image:
     """
     def __init__( self, arg1=None, arg2=None, arg3=None, arg4=None, arg5=None):
         """ Constructors:
-        Image()    - just create an Image instance
-        Image(coding,width,height,[components,[frames]]) 
+        InrImage() - just create an Image instance
+        InrImage(coding,width,height,[components,[frames]]) 
                    - create a new image, equivalent to
-                     img = Image()
+                     img = InrImage()
                      img.setcoding(coding)
                      img.setdims((width,height))
                      img.setcomponents(components)
                      img.setframes(frames)
-        Image(img) - create a new image from an existing image instance,
-                     equivalent to:
-                     img2 = Image()
-                     img2.setcoding(img.getcoding(img))
-                     img2.setdims(img.getdims(img))
-                     img2.setcomponents(img.getcomponents(img))
-                     img2.setframes(img.getframes(img))
-        Image(file) - open an existing image file, equivalent to :
-                     img = Image()
-                     img.open(file)
+        InrImage(img) - create a new image from an existing image instance,
+                        equivalent to:
+                        img2 = InrImage()
+                        img2.setcoding(img.getcoding(img))
+                        img2.setdims(img.getdims(img))
+                        img2.setcomponents(img.getcomponents(img))
+                        img2.setframes(img.getframes(img))
+        InrImage(file) - open an existing image file, equivalent to :
+                         img = InrImage()
+                         img.open(file)
         """
         self._nf   = 0
         self._storage = ''
@@ -134,7 +134,7 @@ class Image:
             if arg5: self.setframes(arg5)
         elif arg1 and isinstance(arg1,str):
             self.open(arg1)
-        elif arg1 and isinstance(arg1,Image):
+        elif arg1 and isinstance(arg1,InrImage):
             for i in range(9):
                 self._lfmt[i] = arg1._lfmt[i]
         
@@ -626,11 +626,11 @@ class Image:
 
         Examples:
           - on a existing image:
-             im = Image('image.inr')
+             im = InrImage('image.inr')
              gray = ...
              im.setcolors(gray)
           - creating a new image
-             im = Image ('uint8',128,64)
+             im = InrImage ('uint8',128,64)
              im.create('myimage.inr',hdr=8)
              im.setcolors(gray)
 
@@ -656,7 +656,7 @@ class Image:
         Return the colors table of an image and None if the image has not.
 
         Example:
-            im = Image('image.inr')
+            im = InrImage('image.inr')
             # get colors table
             tcol = im.getcolors()
             # read image
@@ -801,7 +801,7 @@ def imread(name,frame=None,nframes=None):
     by parameter frame.
     
     """
-    img = Image(name)
+    img = InrImage(name)
     tcol = img.getcolors()
 
     if frame:
@@ -826,14 +826,14 @@ def imwrite(name,data):
         (dimx,dimy,dimv)=data.shape
     if data.ndim == 4:
         (dimz,dimx,dimy,dimv)=data.shape
-    img=Image(str(data.dtype),dimx,dimy,dimv,dimz)
+    img = InrImage(str(data.dtype),dimx,dimy,dimv,dimz)
     img.create(name)
     img.write(data)
     img.close()
 
 def imload(name):
     """ a faire """
-    img=Image(name)
+    img = InrImage(name)
     data = img.readf()
     coding = img.getcoding()
     img.close()

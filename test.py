@@ -15,57 +15,57 @@ call(["mkdir","-p", "tests"])
 ########################
 
 # create scalar image
-im = Image('uint8',32,8)
+im = InrImage('uint8',32,8)
 im.create('tests/uint8.inr')
 im.write(arange(256,dtype=uint8).reshape((8,32)))
 im.close()
 
 # read it
-im = Image('tests/uint8.inr')
+im = InrImage('tests/uint8.inr')
 assert im.getdims() == (32,8)
 data = im.read()
 im.close()
 assert (data.reshape(256) == arange(256,dtype=uint8)).all()
 
 # 2-component image
-im = Image('uint8',16,8,2)
+im = InrImage('uint8',16,8,2)
 im.create('tests/uint8v2.inr')
 im.write(arange(256,dtype=uint8).reshape((8,16,2)))
 im.close()
 
-im = Image('tests/uint8v2.inr')
+im = InrImage('tests/uint8v2.inr')
 assert im.getcomponents() == 2
 data = im.read()
 im.close()
 assert (data.reshape(256) == arange(256,dtype=uint8)).all()
 
 # 2-frame image
-im = Image('uint8',16,8,1,2)
+im = InrImage('uint8',16,8,1,2)
 im.create('tests/uint8z2.inr')
 im.write(arange(256,dtype=uint8).reshape((2,8,16)))
 im.close()
 
-im = Image('tests/uint8z2.inr')
+im = InrImage('tests/uint8z2.inr')
 assert im.getframes() == 2
 data = im.read(access='frame')
 assert (data.reshape(256) == arange(256,dtype=uint8)).all()
 
 # 2-frame and 2-component image
 
-im = Image('uint8',8,8)
+im = InrImage('uint8',8,8)
 im.setcomponents(2)
 im.setframes(2)
 im.create('tests/uint8v2z2.inr')
 im.write(arange(256,dtype=uint8).reshape((2,8,8,2)))
 im.close()
 
-im = Image('tests/uint8v2z2.inr')
+im = InrImage('tests/uint8v2z2.inr')
 data = im.read(access='frame')
 assert (data.reshape(256) == arange(256,dtype=uint8)).all()
 
 
 # copying format
-im2 = Image(im)
+im2 = InrImage(im)
 assert im2.getdims() == im.getdims()
 assert (im2.getcomponents(),im2.getframes()) == (im.getcomponents(),im.getframes())
 assert im2.getcoding() == im.getcoding()
@@ -78,7 +78,7 @@ im.close()
 assert (data2 == data).all()
 
 # explicit
-im = Image()
+im = InrImage()
 im.setdims((8,8))
 im.setcomponents(2)
 im.setframes(2)
@@ -87,7 +87,7 @@ im.create ('tests/unit8v2z2.inr')
 im.write(arange(256,dtype=uint8).reshape((2,8,8,2)))
 im.close()
 
-im = Image()
+im = InrImage()
 im.open('tests/uint8v2z2.inr')
 data = im.read(access='frame')
 im.close()
@@ -97,7 +97,7 @@ assert (data.reshape(256) == arange(256,dtype=uint8)).all()
 ########################
 
 def iload(n):
-    im = Image(n)
+    im = InrImage(n)
     data = im.read()
     im.close()
     return data
@@ -106,7 +106,7 @@ for t in ['b.inr','p.inr']:
     d = array([[0,64,128,255]])/255.
 
     for b in range(1,17)+range(25,33):
-        im = Image('uint'+str(b),4,1)
+        im = InrImage('uint'+str(b),4,1)
         im.create('tests/uint'+str(b)+t)
         im.writef(d)
         im.close()
@@ -140,7 +140,7 @@ for t in ['b.inr','p.inr']:
     d = array([[-128,-65,0,64,127]])/127.
 
     for b in range(3,17)+range(25,33):
-        im = Image('int'+str(b),5,1)
+        im = InrImage('int'+str(b),5,1)
         im.create('tests/int'+str(b)+t)
         im.writef(d)
         im.close()
@@ -172,7 +172,7 @@ for t in ['b.inr','p.inr']:
 # tests on dimensions
 
 # tests on image access
-#im = Image('uint8',4,3,1,5)
+#im = InrImage('uint8',4,3,1,5)
 #im.create('tests/frames.inr')
 #for i in range(5):
 #    im.write(ones((3,4))*i)
@@ -182,4 +182,4 @@ for t in ['b.inr','p.inr']:
 # tests on colormap
 
 
-# tests on function
+# tests on meta-functions
