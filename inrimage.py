@@ -327,7 +327,6 @@ class InrImage:
         ptr = data.__array_interface__['data'][0]
         # cast to void*
         lib.c_lect( self._nf, ccount, cast(ptr,c_void_p))
-        
         # unpack data if needed
         if self._lfmt[3] == -1:
             lib.c_unpkbt(cast(ptr,c_void_p),cast(ptr,c_void_p),
@@ -611,7 +610,7 @@ class InrImage:
             if self._lfmt[8] > 0:
                 return self._lfmt[8] - 200
             else:
-                return self._lfmt[8] + 200
+                return -(self._lfmt[8] + 200)
         else:
             return 0
 
@@ -692,7 +691,7 @@ class InrImage:
         NoneType -> str
 
         Define coding image values as they will be stored on the disc. Available coding are
-         - 'float', 'float32', 'double', 'float64',
+         - 'single', 'float32', 'double', 'float64',
          - 'uintn' or 'intn' where n stands for the number of bits, 'uint8' for instance,
          - 'puintn' or 'pintn' for a 'PACKEE' format, for instance use 'puint1' to 
            code a binary image, each value getting exactly one bit on disk
@@ -701,7 +700,7 @@ class InrImage:
         """
         bsize = 0
         mode = coding
-        if mode == 'float' or mode == 'float32':    # format REELLE, simple precision
+        if mode == 'single' or mode == 'float32':    # format REELLE, simple precision
             itype,bsize,exp = 1,4,0
         elif mode == 'double' or mode == 'float64': # format REELLE, double precision
             itype,bsize,exp = 1,8,0
@@ -747,13 +746,22 @@ class InrImage:
             if self._lfmt[2]<0: coding += str(-self._lfmt[2])
             else: coding += str(8*self._lfmt[2])
         return coding
-    
+
+    def getbits(self):
+        """ 
+        """
+        if self._lfmt[2] < 0: return -self._lfmt[2]
+        else: return self._lfmt[2]*8
+        
     # utils
     def _setstorage(self):
         """
-        Cette fonction calcule la classe Numpy adequate pour stocker les
-        donnees d'une image. La valeur est placée dans la variable
-        privée _storage.
+        Cette fonction calcule la classe Numpy adéquate pour stocker les
+        données d'une image. La valeur est placée dans la variable
+        privée _storage. Pour les codages virgules fixe on a:
+         - de 1 à 8 bits : 1 octet
+         - de 9 à 16 bits: 2 octets
+         - de 17 à 32 bits: 4 octets
         """
         if self._lfmt[3] in (0,-1):  # virgule fixe
             if self._lfmt[8]>0: self._storage='u'
@@ -761,6 +769,7 @@ class InrImage:
             else: nbytes = self._lfmt[2]
             if nbytes == 1: self._storage += 'int8'
             elif nbytes == 2: self._storage += 'int16'
+            elif nbytes == 3: self._storage += 'int32'
             elif nbytes == 4: self._storage += 'int32'
             else: print('error 4 (incorrect bit/type)')
                   
