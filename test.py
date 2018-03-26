@@ -147,13 +147,13 @@ for t in ['b.inr','p.inr']: # FIXE or PACKEE format
     n2=2**7
     d = array([[-128./n2,-64./n2,0,63./n,127./n]])    
 
-    for b in range(3,17)+range(25,33):
+    for b in range(2,17)+range(25,33):
         im = InrImage('int'+str(b),5,1)
         im.create('tests/int'+str(b)+t)
         im.writef(d)
         im.close()
 
-    assert (iload('tests/int3'+t) == array([[-4,-2,0,1,3]])).all()
+    assert (iload('tests/int2'+t) == array([[-2,-1,0,0,1]])).all()
     assert (iload('tests/int3'+t) == array([[-4,-2,0,1,3]])).all()
     assert (iload('tests/int4'+t) == array([[-8,-4,0,3,7]])).all()
     assert (iload('tests/int5'+t) == array([[-16,-8,0,7,15]])).all()
