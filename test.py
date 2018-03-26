@@ -102,7 +102,11 @@ def iload(n):
     im.close()
     return data
     
-for t in ['b.inr','p.inr']:
+for t in ['b.inr','p.inr']: # FIXE or PACKEE format
+
+    # Unsigned formats
+    ##################
+    
     d = array([[0,64,128,255]])/255.
 
     for b in range(1,17)+range(25,33):
@@ -136,8 +140,12 @@ for t in ['b.inr','p.inr']:
     assert (iload('tests/uint31'+t) == array([[0,538976320,1077952639,2147483647]])).all()
     assert (iload('tests/uint32'+t) == array([[0,1077952640,2155905279,4294967295]])).all()
     
+    # Signed formats
+    ################
 
-    d = array([[-128,-65,0,64,127]])/127.
+    n=2**7-1
+    n2=2**7
+    d = array([[-128./n2,-64./n2,0,63./n,127./n]])    
 
     for b in range(3,17)+range(25,33):
         im = InrImage('int'+str(b),5,1)
@@ -145,33 +153,63 @@ for t in ['b.inr','p.inr']:
         im.writef(d)
         im.close()
 
-    assert (iload('tests/int3'+t) == array([[-4,-2,0,2,3]])).all()
-    assert (iload('tests/int4'+t) == array([[-8,-4,0,4,7]])).all()
-    assert (iload('tests/int5'+t) == array([[-16,-8,0,8,15]])).all()
-    assert (iload('tests/int6'+t) == array([[-32,-16,0,16,31]])).all()
-    assert (iload('tests/int7'+t) == array([[-64,-33,0,32,63]])).all()
-    assert (iload('tests/int8'+t) == array([[-128,-66,0,64,127]])).all()
-    assert (iload('tests/int9'+t) == array([[-256,-131,0,129,255]])).all()
-    assert (iload('tests/int10'+t) == array([[-512,-262,0,258,511]])).all()
-    assert (iload('tests/int11'+t) == array([[-1024,-524,0,516,1023]])).all()
-    assert (iload('tests/int12'+t) == array([[-2048,-1048,0,1032,2047]])).all()
-    assert (iload('tests/int13'+t) == array([[-4096,-2096,0,2064,4095]])).all()
-    assert (iload('tests/int14'+t) == array([[-8192,-4193,0,4128,8191]])).all()
-    assert (iload('tests/int15'+t) == array([[-16384,-8386,0,8256,16383]])).all()
-    assert (iload('tests/int16'+t) == array([[-32768,-16771,0,16513,32767]])).all()
-    assert (iload('tests/int25'+t) == array([[-16777216,-8586764,0,8454659,16777215]])).all()
-    assert (iload('tests/int26'+t) == array([[-33554432,-17173528,0,16909319,33554431]])).all()
-    assert (iload('tests/int27'+t) == array([[-67108864,-34347056,0,33818639,67108863]])).all()
-    assert (iload('tests/int28'+t) == array([[-134217728,-68694112,0,67637279,134217727]])).all()
-    assert (iload('tests/int29'+t) == array([[-268435456,-137388224,0,135274559,268435455]])).all()
-    assert (iload('tests/int30'+t) == array([[-536870912,-274776448,0,270549119,536870911]])).all()
-    assert (iload('tests/int31'+t) == array([[-1073741824,-549552896,0,541098239,1073741823]])).all()
-    assert (iload('tests/int32'+t) == array([[-2147483648,-1099105792,0,1082196479,2147483647]])).all()
+    assert (iload('tests/int3'+t) == array([[-4,-2,0,1,3]])).all()
+    assert (iload('tests/int3'+t) == array([[-4,-2,0,1,3]])).all()
+    assert (iload('tests/int4'+t) == array([[-8,-4,0,3,7]])).all()
+    assert (iload('tests/int5'+t) == array([[-16,-8,0,7,15]])).all()
+    assert (iload('tests/int6'+t) == array([[-32,-16,0,15,31]])).all()
+    assert (iload('tests/int7'+t) == array([[-64,-32,0,31,63]])).all()
+    assert (iload('tests/int8'+t) == array([[-128,-64,0,63,127]])).all()    
+    assert (iload('tests/int9'+t) == array([[-256,-128,0,126,255]])).all()
+    assert (iload('tests/int10'+t) == array([[-512,-256,0,253,511]])).all()
+    assert (iload('tests/int11'+t) == array([[-1024,-512,0,507,1023]])).all()
+    assert (iload('tests/int12'+t) == array([[-2048,-1024,0,1015,2047]])).all()
+    assert (iload('tests/int13'+t) == array([[-4096,-2048,0,2031,4095]])).all()
+    assert (iload('tests/int14'+t) == array([[-8192,-4096,0,4063,8191]])).all()
+    assert (iload('tests/int15'+t) == array([[-16384,-8192,0,8127,16383]])).all()
+    assert (iload('tests/int16'+t) == array([[-32768,-16384,0,16254,32767]])).all()
+    assert (iload('tests/int25'+t) == array([[-16777216,-8388608,0,8322556,16777215]])).all()
+    assert (iload('tests/int26'+t) == array([[-33554432,-16777216,0,16645112,33554431]])).all()
+    assert (iload('tests/int27'+t) == array([[-67108864,-33554432,0,33290224,67108863]])).all()
+    assert (iload('tests/int28'+t) == array([[-134217728,-67108864,0,66580448,134217727]])).all()
+    assert (iload('tests/int29'+t) == array([[-268435456,-134217728,0,133160896,268435455]])).all()
+    assert (iload('tests/int30'+t) == array([[-536870912,-268435456,0,266321792,536870911]])).all()
+    assert (iload('tests/int31'+t) == array([[-1073741824,-536870912,0,532643584,1073741823]])).all()
+    assert (iload('tests/int32'+t) == array([[-2147483648,-1073741824,0,1065287168,2147483647]])).all()
+
+
+# TODO bits sur 3 octets
+
+
+# Float formats
+###############
+
+
+im = InrImage('single',5,1)
+im.create('tests/single.inr')
+im.write(d)
+im.close()
+
+im = InrImage('tests/single.inr')
+assert (im.read() == array(d,dtype=single)).all()
+im.close()
+
+im = InrImage('double',5,1)
+im.create('tests/double.inr')
+im.write(d)
+im.close()
+
+im = InrImage('tests/double.inr')
+assert (im.read() == d).all()
+im.close()
 
 
 # tests on dimensions
+#####################
 
 # tests on image access
+#######################
+
 #im = InrImage('uint8',4,3,1,5)
 #im.create('tests/frames.inr')
 #for i in range(5):
