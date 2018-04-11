@@ -4,8 +4,8 @@
 INRPYTHONDIR=$(pwd)/inrimage
 INRIMAGESRC=http://inrimage.gforge.inria.fr/dist/latest/inrimage.tar.gz
 
-# Récupérer inrimage, compiler que la bibliothèque en mode partagée, et
-# l'installer dans un répertoire isolée
+# Récupérer inrimage, ne compiler que la bibliothèque en mode partagée, et
+# l'installer dans un répertoire isolé
 
 TMPDIR=$(mktemp -d)
 mkdir -p $INRPYTHONDIR $TMPDIR
@@ -29,6 +29,6 @@ read -p'Should I modify your ~/.bashrc ? (y/N)' yesno
 
 case $yesno in
     y)
-	echo "export PYTHONDIR=\$PYTHONDIR:$INRPYTHONDIR" >> ~/.bashrc
+	echo "export PYTHONPATH=$INRPYTHONDIR:\$PYTHONPATH" >> ~/.bashrc
 	;;
 esac
