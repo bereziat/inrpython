@@ -4,26 +4,27 @@
 Inrimage wrapper for python (only python2 at this time is supported)
 """
 __author__ = "Dominique Béréziat (dominique.bereziat@lip6.fr)"
-__date__   = "march 2018"
-__version__ = "0.1"
+__date__   = "april 2018"
+__version__ = "0.2"
 
 from ctypes import c_wchar_p, c_char_p, c_int, c_uint8, c_float, c_double, c_void_p, cast
 import numpy as np
 import sys
-from os import environ
+from os import environ, system
+from subprocess import check_output
 
-# TODO
-#   * pas de capture des erreurs inrimage pour les exceptions python
-#     => pas d'autre choix que d'introduire de nouvelles fonctions dans libinrimage
-#   * prefix installation inrimage et python
-#
 # BUGS
-#   * Marche pas en python3 :(
+#   * Marche pas en python 3
 assert sys.version_info.major == 2
-#
 
+# Load libinrimage
 if environ.get('INRPYTHONPATH'): libinrpath=environ.get('INRPYTHONPATH')+'/lib'
 lib = np.ctypeslib.load_library('libinrimage',libinrpath)
+
+# Find inrimage config if inrimage software is installed
+if system('which inrinfo >/dev/null') == 0:
+    inrhome=check_output("inrinfo -h | cut -d' ' -f2",shell=True)
+    environ['INR_HOME']=inrhome[:-1]
 
 #######################
 # initialize inrimage
@@ -37,21 +38,25 @@ lib.inr_init(len(_argv),_argv,'0.1','inrimage python wrapper','')
 #####################
 # inrimage bindings
 #####################
-# image_()
+# imagece_()
 c_lfmt = np.ctypeslib.ndpointer(dtype=c_int,ndim=1)
-lib.image_.restype = c_void_p
-lib.image_.argtypes = [c_char_p,c_char_p,c_char_p,c_lfmt]
-# c_lecflt()
+lib.imagece_.restype = c_void_p
+lib.imagece_.argtypes = [c_char_p,c_char_p,c_char_p,c_lfmt]
+# c_lecfltce()
 c_floatp = np.ctypeslib.ndpointer(dtype=c_float)
-lib.c_lecflt.argtypes = [c_void_p,c_int,c_floatp]
-# c_ecrflt()
-lib.c_ecrflt.argtypes = [c_void_p,c_int,c_floatp]
+lib.c_lecfltce.restypes = c_int
+lib.c_lecfltce.argtypes = [c_void_p,c_int,c_floatp]
+# c_ecrfltce()
+lib.c_ecrfltce.restype = c_int
+lib.c_ecrfltce.argtypes = [c_void_p,c_int,c_floatp]
 # fermnf_()
 lib.fermnf_.argtypes = [c_void_p]
-# c_lect()
-lib.c_lect.argtypes = [c_void_p,c_int,c_void_p]
-# c_ecr()
-lib.c_ecr.argtypes = [c_void_p,c_int,c_void_p]
+# c_lectce()
+lib.c_lectce.restype = c_int
+lib.c_lectce.argtypes = [c_void_p,c_int,c_void_p]
+# c_ecrce()
+lib.c_ecrce.restype = c_int
+lib.c_ecrce.argtypes = [c_void_p,c_int,c_void_p]
 # c_lptset()
 lib.c_lptset.argtypes = [c_void_p,c_int]
 # c_lptget()
@@ -124,7 +129,9 @@ class InrImage:
         self._storage = ''
 
         # codage par défaut 1 octet non signé
-        self._lfmt = np.array( [0,0,1,0,0,0,1,1,200],dtype=c_int)
+        # le 10 élément est utilisé par open() et create() pour retourner
+        # un message d'erreur
+        self._lfmt = np.array( [0,0,1,0,0,0,1,1,200,0],dtype=c_int)
 
         if arg1 and isinstance(arg1,str) and arg2 and isinstance(arg2,int) and \
            arg3 and isinstance(arg3,int):
@@ -147,11 +154,23 @@ class InrImage:
         See also: close()
         """
         if self._nf == 0:
-            self._nf = lib.image_(filename,'e',' ',self._lfmt)
-            self._setstorage()
-            self._filename = filename
-            if interpreter: self._msg('opened for read/write '+filename)
+            self._nf = lib.imagece_(filename,'e',' ',self._lfmt)
+            if self._lfmt[9] != 0:
+                self._nf = 0
+                if interpreter: print 'Inrimage error '+str(self._lfmt[9])+' with '+filename
+            else:
+                self._setstorage()
+                self._filename = filename
+                if interpreter: self._msg('opened for read/write '+filename)
 
+    def geterror(self):
+        """
+        NoneType -> int
+        
+        Returns inrimage code error
+        """
+        return self._lfmt[9]
+    
     def create(self,filename,hdr=None):
         """
         str * int -> NoneType
@@ -166,11 +185,15 @@ class InrImage:
         """
         if self._nf == 0:
             if hdr: lib.set_hdr_min(hdr)
-            self._nf = lib.image_(filename,'c',' ',self._lfmt)
-            if hdr: lib.set_hdr_min(1)
-            self._filename = filename
-            self._setstorage()
-            if interpreter: self._msg('created '+filename)
+            self._nf = lib.imagece_(filename,'c',' ',self._lfmt)
+            if self._lfmt[9] != 0:
+                self._nf = 0
+                if interpreter: print 'Inrimage error '+str(self._lfmt[9])+' with '+filename
+            else:
+                if hdr: lib.set_hdr_min(1)
+                self._filename = filename
+                self._setstorage()
+                if interpreter: self._msg('created '+filename)
 
     def close(self):
         """
@@ -207,10 +230,18 @@ class InrImage:
             # hack to read double precision image
             data = np.empty( (ccount,self._lfmt[0]), dtype=c_double)
             ptr = data.__array_interface__['data'][0]
-            lib.c_lect( self._nf, ccount, cast(ptr,c_void_p))
+            self._lfmt[9] = lib.c_lectce( self._nf, ccount, cast(ptr,c_void_p))
+            if self._lfmt[9] != 0:
+                if interpreter:
+                    print 'Inrimage error ' + str(self._lfmt[9])
+                return None
         else:
             data = np.empty( (ccount,self._lfmt[0]), dtype=c_float)
-            lib.c_lecflt( self._nf, ccount, data)
+            self._lfmt[9] = lib.c_lecfltce( self._nf, ccount, data)
+            if self._lfmt[9] != 0:
+                if interpreter:
+                    print 'Inrimage error ' + str(self._lfmt[9])
+                return None
 
         # reshape matrix
         if access=='frame' and self._lfmt[7]>1:
@@ -266,10 +297,16 @@ class InrImage:
         if self._lfmt[3] ==1 and self._lfmt[2] == 8:
             data_copy = np.array(data,dtype=c_double)
             ptr = data_copy.__array_interface__['data'][0]
-            lib.c_ecr( self._nf, nframes*nlines, cast(ptr,c_void_p))
+            self._lfmt[9] = lib.c_ecrce( self._nf, nframes*nlines, cast(ptr,c_void_p))
+            if self._lfmt[9] != 0:
+                if interpreter: print 'Inrimage error ' + str(self._lfmt[9])
+                return 0
         else:
             data_copy = np.array(data,dtype=c_float)
-            lib.c_ecrflt( self._nf, nframes*nlines, data_copy)
+            self._lfmt[9] = lib.c_ecrfltce( self._nf, nframes*nlines, data_copy)
+            if self._lfmt[9] != 0:
+                if interpreter:  print 'Inrimage error ' + str(self._lfmt[9])
+                return 0
 
         if interpreter:
             print 'write a total of ' + str(nframes*nlines) + \
@@ -326,7 +363,12 @@ class InrImage:
         # address of data C-buffer ! 
         ptr = data.__array_interface__['data'][0]
         # cast to void*
-        lib.c_lect( self._nf, ccount, cast(ptr,c_void_p))
+        self._lfmt[9] = lib.c_lectce( self._nf, ccount, cast(ptr,c_void_p))
+        if self._lfmt[9] != 0:
+            if interpreter:
+                print 'Inrimage error ' + str(self._lfmt[9])
+            return None
+        
         # unpack data if needed
         if self._lfmt[3] == -1:
             lib.c_unpkbt(cast(ptr,c_void_p),cast(ptr,c_void_p),
@@ -412,15 +454,17 @@ class InrImage:
             ptr = data_copy.__array_interface__['data'][0]
 
         # write data with cast to void*
-        lib.c_ecr( self._nf, nframes*nlines, cast(ptr,c_void_p))
-
+        self._lfmt[9] = lib.c_ecrce( self._nf, nframes*nlines, cast(ptr,c_void_p))
+        if self._lfmt[9] != 0:
+            if interpreter: print 'Inrimage error ' + str(self._lfmt[9])
+            return 0
+            
         # return
         if interpreter:
             print 'write a total of ' + str(nframes*nlines) + \
                 'lines to ' + self._filename
         return nframes*nlines
  
-
     def seek(self,offset=1,access=None):
         """
         int * str -> None
