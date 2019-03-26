@@ -85,7 +85,8 @@ except AttributeError:
 class InrImage:
     """
     A simple Python wrapper to Inrimage library. See 'man Intro' for
-    an introduction to the Inrimage format.
+    an introduction to the Inrimage format (if inrimage is correctly
+    installed on your system).
 
     An Inrimage image has the following characteristics:
       - <<nframes>> of images called frame (video, sequence of images)
@@ -125,7 +126,7 @@ class InrImage:
         self._storage = ''
 
         # codage par défaut 1 octet non signé
-        # le 10 élément est utilisé par open() et create() pour retourner
+        # le 10eme élément est utilisé par open() et create() pour retourner
         # un message d'erreur
         self._lfmt = np.array( [0,0,1,0,0,0,1,1,200,0],dtype=c_int)
 
@@ -216,11 +217,11 @@ class InrImage:
         int * str -> Array(dtype=single)
 
         Read data from disc. This function is similar to read() excepted that it
-        always returns a float matrix. Image values with flotting precision are 
+        always returns a float matrix. Image values with single precision are 
         directly read, image values with fixed precision are normalized between
         [0,1] or [-1,1] if image values are signed (see man lecflt).
 
-        See also read(), writef()
+        See also: read(), writef()
         """
         if self._nf == 0: return None
         ccount = count
@@ -477,7 +478,7 @@ class InrImage:
         number gives a position from the end of the current frame.
         
         Examples:
-           img.seek(1)          # go at the first line or current frame
+           img.seek(1)          # go at the first line of current frame
            img.seek(2,'frame')  # go at the beginning of the second frame
            img.seek(-1)         # go at the beginning of the last line of current frame
 
