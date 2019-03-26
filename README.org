@@ -3,7 +3,7 @@ A Python class for read/write Inrimage images. The module is based on =ctypes=.
 * Installation
   Currently, it is very rudimentary: you have to edit =install.sh=
   script and set up variable =INRPYTHONDIR= (the place where you want
-  to install Inrpython). Then, just type:
+  to install Inrpython). A Fortran compiler is required. Then, just type:
 
 : ./install.sh 
 
