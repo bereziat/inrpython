@@ -109,7 +109,7 @@ for t in ['b.inr','p.inr']: # FIXE or PACKEE format
     
     d = array([[0,64,128,255]])/255.
 
-    for b in range(1,17)+range(25,33):
+    for b in list(range(1,17))+list(range(25,33)):
         im = InrImage('uint'+str(b),4,1)
         im.create('tests/uint'+str(b)+t)
         im.writef(d)
@@ -147,7 +147,7 @@ for t in ['b.inr','p.inr']: # FIXE or PACKEE format
     n2=2**7
     d = array([[-128./n2,-64./n2,0,63./n,127./n]])    
 
-    for b in range(2,17)+range(25,33):
+    for b in list(range(2,17))+list(range(25,33)):
         im = InrImage('int'+str(b),5,1)
         im.create('tests/int'+str(b)+t)
         im.writef(d)

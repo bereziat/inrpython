@@ -1,7 +1,7 @@
 #!/bin/bash
 # installation du module (version beta et naive)
 
-INRPYTHONDIR=$(pwd)/usr
+INRPYTHONDIR=$(pwd)/inrimage
 INRIMAGESRC=http://inrimage.gforge.inria.fr/dist/latest/inrimage.tar.gz
 
 # Récupérer inrimage, ne compiler que la bibliothèque en mode partagée, et

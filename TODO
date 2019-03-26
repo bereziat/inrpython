@@ -1,5 +1,33 @@
-- patch inrimage pour gestion des exceptions
+- mettre les appels inrimage 'trappé' (répertoire =patch=) dans la distribution
+  inrimage officiel
+
 - distribution: packaging conda ?
   https://conda.io/docs/user-guide/tutorials/build-pkgs.html
   (plus tard, directement dans la distrib inrimage quand
   libinrimage.a sera shared-safe)
+  ça progresse (voir conda/inrimage)
+  il faut une installation "standard" du module python (avec disttools, setup.py)
+  https://packaging.python.org/
+
+  - environnement virtuel sous python
+    avec python2:
+    #+BEGIN_SRC bash
+    virtualenv DIR
+    source DIR/bin/activate
+    #+END_SRC
+    ceci créé un répertoire DIR dans laquelle on trouve une hiérarchie
+    usr d'un environnement minimal python2. le path contient en
+    premier =DIR/bin= et le prompt est modifié et laisse apparaître le
+    nom de l'environnement.
+    Pour quitter l'environnement:
+    #+BEGIN_SRC bash
+    deactivate 
+    #+END_SRC
+    C'est le même principe sous conda, ce dernier s'étant inspiré du
+    premier
+  
+
+
+;; Local Variables:
+;; mode: org
+;; End:

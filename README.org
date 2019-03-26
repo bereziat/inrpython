@@ -1,15 +1,13 @@
-A Python class for read/write Inrimage images. The module is based on
-=ctypes= and currently works only with =python2=.
-
+A Python class for read/write Inrimage images. The module is based on =ctypes=.
 
 * Installation
-  Actually, it is very rudimentary: you have to edit =install.sh=
+  Currently, it is very rudimentary: you have to edit =install.sh=
   script and set up variable =INRPYTHONDIR= (the place where you want
   to install Inrpython). Then, just type:
 
 : ./install.sh 
 
-  The script ask you to touch your =~/.bashrc= file and add
+  The script ask you to touch your =~/.bashrc= file for adding
   =INRPYTHONDIR= in =PYTHONPATH= environ variable.
 
 * See also
