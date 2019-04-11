@@ -259,7 +259,7 @@ class InrImage:
             data = np.reshape(data,(ccount,self._lfmt[4],self._lfmt[6]))
 
         if interpreter:
-            print('read a total of ' + str(ccount) + ' lines from ' + self._filename)
+            print('read a total of ' + str(ccount) + ' lines from ' + self._filename.decode())
 
         return data
 
@@ -314,7 +314,7 @@ class InrImage:
                 return 0
 
         if interpreter:
-            print ('write a total of ' + str(nframes*nlines) + 'lines to ' + self._filename)
+            print ('write a total of ' + str(nframes*nlines) + 'lines to ' + self._filename.decode())
 
         return nframes*nlines
         
@@ -388,7 +388,7 @@ class InrImage:
             data=np.reshape(data,(ccount,self._lfmt[4],self._lfmt[6]))
 
         if interpreter:
-            print('read a total of ' + str(ccount) + ' lines from ' + self._filename)
+            print('read a total of ' + str(ccount) + ' lines from ' + self._filename.decode())
             
         return data
 
@@ -465,7 +465,7 @@ class InrImage:
             
         # return
         if interpreter:
-            print('write a total of ' + str(nframes*nlines) + 'lines to ' + self._filename)
+            print('write a total of ' + str(nframes*nlines) + 'lines to ' + self._filename.decode())
         return nframes*nlines
  
     def seek(self,offset=1,access=None):
