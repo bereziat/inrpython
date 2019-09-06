@@ -94,7 +94,7 @@ class InrImage:
       - a pixel has <<components>> values (usually 1 or 3 but may be any 
         positive integer value)
       - a value can be coded using :
-        - floatting precision (single or double precision),
+        - floating precision (single or double precision),
         - fixed precision with an arbitrary size between 1 and 32 bits
         - value with fixed precision may be signed or unsigned
         - exposant of fixed precision can also be coded
