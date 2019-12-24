@@ -1,7 +1,7 @@
 #!/bin/bash
 # installation du module (version beta et naive)
 
-INRPYTHONDIR=/home/icare_l1/usr-fedora/inrpython
+INRPYTHONDIR=/usr/local/inrimage/python
 INRIMAGESRC=http://inrimage.gforge.inria.fr/dist/latest/inrimage.tar.gz
 
 # Récupérer inrimage, ne compiler que la bibliothèque en mode partagée, et
@@ -15,8 +15,18 @@ usage : install.sh [-nc]
 EOF
 	exit 0
 	;;
+esac
+
+read -p"inrpython will be installed in $INRPYTHONDIR. Is that correct? (y/N) "  yesno
+case $yesno in
+    y|Y) ;;
+    *) echo "Edit this file and change the value of INRPYTHONDIR variable (line 4)"
+       echo "Installation aborted"
+       exit 1;;
+esac
+
+case $1 in    
     -nc)
-	
 	;;
     *)
 	TMPDIR=$(mktemp -d)
@@ -24,6 +34,7 @@ EOF
 	patch=$(pwd)/patch
 	(
 	    cd $TMPDIR
+	    pwd
 	    wget $INRIMAGESRC
 	    tar xfz inrimage.tar.gz
 	    ls -la
@@ -32,19 +43,30 @@ EOF
 	    cd src/inrimage
 	    cp $patch/*.c .
 	    make
-	    make install
+	    if [ -w $INRPYTHONDIR ]; then
+		make install
+	    else
+		sudo make install
+	    fi
 	)
 	rm -rf $TMPDIR
 	;;
 esac
 
-sed -r "/INRPYTHONPATH/d; s,libinrpath,'$INRPYTHONDIR/lib'," <inrimage.py >$INRPYTHONDIR/inrimage.py &&
-    echo "-> install $INRPYTHONDIR/inrimage.py done"
+set -x
+TMPFILE=$(mktemp)
+sed -r "/INRPYTHONPATH/d; s,libinrpath,'$INRPYTHONDIR/lib'," <inrimage.py >$TMPFILE
 
-read -p'Should I modify your ~/.bashrc ? (y/N)' yesno
+if [ -w $INRPYTHONDIR ]; then
+    mv $TMPFILE $INRPYTHONDIR/inrimage.py
+else
+    sudo mv $TMPFILE $INRPYTHONDIR/inrimage.py
+fi
 
+read -p'Should I patch your ~/.bash_profile? (y/N) ' yesno
 case $yesno in
-    y)
-	echo "export PYTHONPATH=$INRPYTHONDIR:\$PYTHONPATH" >> ~/.bashrc
+    y|Y)
+	[ -f ~/.bash_profile ] && cp ~/.profile_bash ~/.bash_profile-$$
+	echo "export PYTHONPATH=$INRPYTHONDIR:\$PYTHONPATH" >> ~/.bash_profile
 	;;
 esac
