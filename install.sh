@@ -59,8 +59,10 @@ sed -r "/INRPYTHONPATH/d; s,libinrpath,'$INRPYTHONDIR/lib'," <inrimage.py >$TMPF
 
 if [ -w $INRPYTHONDIR ]; then
     mv $TMPFILE $INRPYTHONDIR/inrimage.py
+    cp -r bin $INRPYTHONDIR/
 else
     sudo mv $TMPFILE $INRPYTHONDIR/inrimage.py
+    sudo cp -r bin $INRPYTHONDIR/
 fi
 
 read -p'Should I patch your ~/.bash_profile? (y/N) ' yesno
