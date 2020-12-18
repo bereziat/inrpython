@@ -1,6 +1,3 @@
-- mettre les appels inrimage 'trappé' (répertoire =patch=) dans la distribution
-  inrimage officielle
-
 - distribution: packaging conda ?
   https://conda.io/docs/user-guide/tutorials/build-pkgs.html
   (plus tard, directement dans la distrib inrimage quand
