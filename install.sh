@@ -29,11 +29,11 @@ case $1 in
     -nc)
 	;;
     *)
-	TMPDIR=$(mktemp -d)
-	mkdir -p $INRPYTHONDIR $TMPDIR
+	TEMPD=$(mktemp -d)
+	mkdir -p $INRPYTHONDIR $TEMPD
 	patch=$(pwd)/patch
 	(
-	    cd $TMPDIR
+	    cd $TEMPD
 	    pwd
 	    wget $INRIMAGESRC
 	    tar xfz inrimage.tar.gz
@@ -41,7 +41,6 @@ case $1 in
 	    cd inrimage-*
 	    ./configure --prefix=$INRPYTHONDIR --enable-shared
 	    cd src/inrimage
-	    cp $patch/*.c .
 	    make
 	    if [ -w $INRPYTHONDIR ]; then
 		make install
@@ -49,11 +48,10 @@ case $1 in
 		sudo make install
 	    fi
 	)
-	rm -rf $TMPDIR
+	rm -rf $TEMPD
 	;;
 esac
 
-set -x
 TMPFILE=$(mktemp)
 sed -r "/INRPYTHONPATH/d; s,libinrpath,'$INRPYTHONDIR/lib'," <inrimage.py >$TMPFILE
 
