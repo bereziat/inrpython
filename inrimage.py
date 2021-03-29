@@ -844,7 +844,7 @@ class InrImage:
         
 ############
 
-def imread(name,frame=None,nframes=None):
+def inrread(name,frame=None,nframes=None):
     """ 
     str * int * int -> Array
 
@@ -873,21 +873,30 @@ def imread(name,frame=None,nframes=None):
     img.close()
     return data
 
-def imwrite(name,data):
-    """ a faire """
-    dimv=dimz=1
+def inrwrite(name,data):
+    """ A 3-dimensional array is written as a multiframe image (ndimz>1) unless
+        its last dimension is equal to 2, 3 , 4 (the usual way to represent a scalar image with
+        a mask or a velocity map, ndimv=2, a color image (ndimv=3) or color with mash (ndimv=4)
+        
+        To terminate ...
+    """
+    dimy=dimv=dimz=1
+    if data.ndim == 1:
+        dimx = data.size
     if data.ndim == 2:
-        (dimx,dimy)=data.shape
-    if data.ndim == 3:
-        (dimx,dimy,dimv)=data.shape
-    if data.ndim == 4:
-        (dimz,dimx,dimy,dimv)=data.shape
-    img = InrImage(str(data.dtype),dimx,dimy,dimv,dimz)
+        (dimy,dimx) = data.shape
+    elif data.ndim == 3 and (data.shape[2] > 1 and data.shape[2] < 5):
+        (dimy,dimx,dimv) = data.shape
+    elif data.ndim == 3:
+        (dimz,dimy,dimx) = data.shape
+    elif data.ndim == 4:
+        (dimz,dimy,dimx,dimv) = data.shape
+    img = InrImage(str(data.dtype), dimx, dimy, dimv, dimz)
     img.create(name)
     img.write(data)
     img.close()
 
-def imload(name):
+def inrload(name):
     """ a faire """
     img = InrImage(name)
     data = img.readf()
@@ -895,7 +904,7 @@ def imload(name):
     img.close()
     return (data,coding)
 
-def imsave(name,data,coding):
+def inrsave(name,data,coding):
     """ todo """
     print("inrsave: todo")
 
