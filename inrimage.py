@@ -855,9 +855,12 @@ def inrread(name,frame=None,nframes=None):
 
     If nframes != None, read nframes frames from the position given 
     by parameter frame.
+
+    If an error occurs, None is returned.
     
     """
     img = InrImage(name)
+    if img.geterror(): return None
     tcol = img.getcolors()
 
     if frame:
@@ -873,7 +876,7 @@ def inrread(name,frame=None,nframes=None):
     img.close()
     return data
 
-def inrwrite(name,data):
+def inrwrite(data,name):
     """ A 3-dimensional array is written as a multiframe image (ndimz>1) unless
         its last dimension is equal to 2, 3 , 4 (the usual way to represent a scalar image with
         a mask or a velocity map, ndimv=2, a color image (ndimv=3) or color with mash (ndimv=4)
@@ -904,7 +907,7 @@ def inrload(name):
     img.close()
     return (data,coding)
 
-def inrsave(name,data,coding):
+def inrsave(data,coding,name):
     """ todo """
     print("inrsave: todo")
 
