@@ -4,8 +4,8 @@
 Inrimage wrapper for python
 """
 __author__ = "Dominique Béréziat (dominique.bereziat@lip6.fr)"
-__date__   = "march 2019"
-__version__ = "1.0"
+__date__   = "April 2021"
+__version__ = "1.1"
 
 from ctypes import c_wchar_p, c_char_p, c_int, c_uint8, c_float, c_double, c_void_p, cast
 import numpy as np
