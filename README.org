@@ -13,3 +13,4 @@ A Python class for read/write Inrimage images. The module is based on =ctypes=.
 * See also
   http://inrimage.gforge.inria.fr
 
+ 
