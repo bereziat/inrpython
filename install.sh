@@ -1,8 +1,8 @@
 #!/bin/bash
 # installation du module (version beta et naive)
 
-INRPYTHONDIR=/usr/local/inrimage/python
-INRIMAGESRC=http://inrimage.gforge.inria.fr/dist/latest/inrimage.tar.gz
+INRPYTHONDIR=${INRPYTHONDIR:-/usr/local/inrpython}
+INRIMAGESRC='--no-check-certificate http://www-pequan.lip6.fr/~bereziat/inrimage/dist/latest/inrimage.tar.gz'
 
 # Récupérer inrimage, ne compiler que la bibliothèque en mode partagée, et
 # l'installer dans un répertoire isolé
@@ -20,7 +20,8 @@ esac
 read -p"inrpython will be installed in $INRPYTHONDIR. Is that correct? (y/N) "  yesno
 case $yesno in
     y|Y) ;;
-    *) echo "Edit this file and change the value of INRPYTHONDIR variable (line 4)"
+    *) echo "To change the installation directory, type:"
+       echo "INRPYTHONDIR=path_to_install_inrpython ./install.sh"
        echo "Installation aborted"
        exit 1;;
 esac
@@ -31,7 +32,6 @@ case $1 in
     *)
 	TEMPD=$(mktemp -d)
 	mkdir -p $INRPYTHONDIR $TEMPD
-	patch=$(pwd)/patch
 	(
 	    cd $TEMPD
 	    pwd
