@@ -1,18 +1,18 @@
 A Python class for read/write Inrimage images. The module is based on =ctypes=.
 
 * Installation
-  A very rudimentary script allow to install the module in your environment. Warning: 
-  this installation procedure is not in the golden standard of pytho. It just use 
+  A very rudimentary script allows you to install the module in your environment. Warning: 
+  this installation procedure is not in the golden standard of Python. It just relies on the
   environ variable =PYTHONPATH=.
 
-  - Dependencies: a Fortran compiler is required.
-  -  Default installation (in =/usr/local/inrpython=):
+  - Dependencies: a Fortran compiler
+  - Default installation (in =/usr/local/inrpython=), type in a terminal:
   : ./install.sh
   - Installation in another directory:
   : INRPYTHONDIR=install_path  ./install.sh 
 
-  After installation, the script then ask you to touch your =~/.bashrc= file for adding
-  =INRPYTHONDIR= in =PYTHONPATH= environ variable.
+  After installation, the script then ask you to touch your =~/.bashrc= file for
+  setting up the =PYTHONPATH= environ variable.
 
 * See also
   http://pequan.lip6.fr/~bereziat/inrimage
